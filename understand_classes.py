@@ -2,6 +2,7 @@ import pytest
 
 # Some pretty basic python tests to verify my understanding of Python's classes
 
+
 class SimpleClass:
 
     # this should be the equivalent of a constructor
@@ -9,6 +10,7 @@ class SimpleClass:
         # the underscore should make this private
         self.__str_val = str_val
         self.__int_val = int_val
+        self.__int_prop = 0
         self.public_str_val = str_val
 
     # this should provide a pretty print
@@ -38,6 +40,17 @@ class SimpleClass:
     def twice_the_int_val(self) -> int:
         return self.__int_val * 2
 
+    # This creates a read / write property. As implemented here it's fairly pointless and a simple
+    # public attribute would do just as well however, there is an opportunity to compute the returned
+    # value or validate / constrain the set value.
+    @property
+    def rw_int_property(self) -> int:
+        return self.__int_prop
+
+    # this is the setter or a set/get property pair
+    @rw_int_property.setter
+    def rw_int_property(self, rw_int_property: int) -> None:
+        self.__int_prop = rw_int_property
 
 
 class TestMyUnderstandingOfClasses:
@@ -75,8 +88,16 @@ class TestMyUnderstandingOfClasses:
             c1.twice_the_int_val = 10
 
     # pre-pending double underscore should make an attribute private to the class
-    def test_can_access_private_attribute(self):
+    def test_cant_access_private_attribute(self):
         c1 = SimpleClass(str_val="one", int_val=3)
         c1.__str_val = "not really private!"
         str_rep = str(c1)
+        # If the access attempt above worked then this assert would fail as str_val would have changed
         assert str_rep == 'SimpleClass(str_val="one", int_val=3, public_str_val="one", twice_the_int_val=6)'
+
+    # rw_int_property is implemented as a property with a getter and a setter ... simple test to ensure I
+    # can set it and get it.
+    def test_rw_property_works(self):
+        c1 = SimpleClass(str_val="one", int_val=3)
+        c1.rw_int_property = 10
+        assert c1.rw_int_property == 10
