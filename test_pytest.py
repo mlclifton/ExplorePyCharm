@@ -52,3 +52,21 @@ def test_using_named_fixture(named_fixture):
 @pytest.mark.usefixtures("named_fixture")
 def test_also_using_named_fixture():
     pass
+
+
+class DummyClass():
+    def __init__(self):
+        self.some_list = ['Foo', 'Bar']
+
+
+class TestClassUsingFixture:
+    def __init__(self):
+        self.some_class_instance = DummyClass()
+
+    @pytest.fixture()
+    def setup_test_fixture(self):
+        self.some_class_instance.some_list[0] = 'FooBar'
+        self.some_class_instance.some_list[1] = 'BarFoo'
+
+    def test_a_method_using_a_fixture(self, setup_test_fixture):
+        assert self.some_class_instance.some_list[0] == 'FooBar'
