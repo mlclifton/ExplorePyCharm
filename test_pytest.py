@@ -8,65 +8,80 @@ import pytest
 
 
 def test_func():
-    pass
-
-
+	pass
+	
+	
 def test_another_test_with_assert():
-    assert False, "This should fail"
-
-
+	assert False, "This should fail"
+	
+	
 def test_a_third_test():
-    pass
-
-
+	pass
+	
+	
 class TestClass:
 
-    def test_in_a_class(self):
-        pass
-
-    def this_is_not_a_test_in_a_class(self):
-        pass
-
-
+	def test_in_a_class(self):
+		pass
+		
+	def this_is_not_a_test_in_a_class(self):
+		pass
+		
+		
 class NotATestClass:
 
-    def test_name_but_wont_be_collected(self):
-        pass
-
-
+	def test_name_but_wont_be_collected(self):
+		pass
+		
+		
 @pytest.fixture()
 def another_named_fixture():
-    pass
-
-
+	pass
+	
+	
 @pytest.fixture()
 def named_fixture():
-    pass
-
-
+	pass
+	
+	
 # this should call named_fixture() before entering the function.
 def test_using_named_fixture(named_fixture):
-    pass
-
-
+	pass
+	
+	
 @pytest.mark.usefixtures("named_fixture")
 def test_also_using_named_fixture():
-    pass
-
-
+	pass
+	
+	
 class DummyClass():
-    def __init__(self):
-        self.some_list = ['Foo', 'Bar']
-
-
+	def __init__(self):
+		self.some_list = ['Foo', 'Bar']
+		
+		
 class TestClassUsingFixture:
-    def __init__(self):
-        self.some_class_instance = DummyClass()
+	def __init__(self):
+		self.some_class_instance = DummyClass()
+		
+	@pytest.fixture()
+	def setup_test_fixture(self):
+		self.some_class_instance.some_list[0] = 'FooBar'
+		self.some_class_instance.some_list[1] = 'BarFoo'
+		
+	def test_a_method_using_a_fixture(self, setup_test_fixture):
+		assert self.some_class_instance.some_list[0] == 'FooBar'
 
-    @pytest.fixture()
-    def setup_test_fixture(self):
-        self.some_class_instance.some_list[0] = 'FooBar'
-        self.some_class_instance.some_list[1] = 'BarFoo'
+# TESTING FOR EXCEPTIONS
+# a custom error and a function to raise it
+class MyError(Exception):
+	pass
+	
+def error_throwing_func():
+	raise MyError
+	
+# a test to confirm an exception is raised
+def test_capture_exception():
+	with pytest.raises(MyError):
+		error_throwing_func()
 
-    def test_a_method_using_a_fixture(self, setup_test_fixture):
-        assert self.some_class_instance.some_list[0] == 'FooBar'
+	
